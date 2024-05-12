@@ -56,6 +56,8 @@ function checkPass(req) {
 }
 
 function canAddLink(req) {
+  console.log(process.env.ADD_LINK_PASS)
+  console.log(req.body.auth)
   if (req.body.auth) {
     return req.body.auth == process.env.ADD_LINK_PASS;
   } else {
