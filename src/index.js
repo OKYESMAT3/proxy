@@ -1,3 +1,37 @@
+let links;
+import path from 'node:path';
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const filePath = path.join(__dirname, "api/some.pass");
+fs.readFile(filePath, "utf8", (err, data) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+  try {
+    links = Object.keys(JSON.parse(data));
+  } catch (err) {
+    console.error("Error parsing JSON:", err);
+  }
+});
+fs.watch(filePath, () => {
+  fs.readFile(filePath, "utf8", (err, data) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    try {
+      links = Object.keys(JSON.parse(data));
+      console.log("file change");
+    } catch (err) {
+      console.error("Error parsing JSON:", err);
+    }
+  });
+});
 import express from "express";
 import { createServer } from "node:http";
 import { uvPath } from "@titaniumnetwork-dev/ultraviolet";
@@ -20,6 +54,13 @@ app.post("/api/addLink", (req, res) => {
     res.sendStatus(addPass(req.body));
   } else {
     res.sendStatus(401);
+  }
+});
+app.use("/check", (req, res) => {
+  if(links.includes(req.query.domain)) {
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(404);
   }
 });
 app.use((req, res, next) => {
