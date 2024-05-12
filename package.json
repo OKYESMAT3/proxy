@@ -8,7 +8,7 @@
     "node": ">=16.0.0"
   },
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node --env-file=.env src/index.js"
   },
   "keywords": [
     "proxy"
@@ -19,6 +19,7 @@
     "@mercuryworkshop/bare-mux": "^1.0.5",
     "@mercuryworkshop/epoxy-transport": "^1.1.0",
     "@titaniumnetwork-dev/ultraviolet": "^3.0.0",
+    "cookie-parser": "^1.4.6",
     "express": "^4.19.2",
     "wisp-server-node": "^1.0.1",
     "ws": "^8.16.0"

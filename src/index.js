@@ -6,12 +6,24 @@ import { baremuxPath } from "@mercuryworkshop/bare-mux";
 import { join } from "node:path";
 import { hostname } from "node:os";
 import wisp from "wisp-server-node";
+import cookieParser from 'cookie-parser';
 let publicPath = "./public/";
-import checkPass from "./api/verify.js";
+import addPass from './api/addPass.cjs';
+import pkg from './api/verify.cjs';
+const { checkPass, canAddLink } = pkg;
 const app = express();
 // Load our publicPath first and prioritize it over UV.
+app.use(express.json());
+app.use(cookieParser());
+app.post("/api/addLink", (req, res) => {
+  if(canAddLink(req)) {
+    res.sendStatus(addPass(req.body));
+  } else {
+    res.sendStatus(401);
+  }
+});
 app.use((req, res, next) => {
-  if (!checkPass(req) && req.path != "/verify.html") {
+  if (!checkPass(req)) {
     res.send("<script>document.cookie = `password=${prompt('Enter the password')}`;location.reload();</script>");
   } else {
     next();
